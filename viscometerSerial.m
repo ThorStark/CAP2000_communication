@@ -1,3 +1,15 @@
+%{  
+   *viscometerSerial.m
+
+   *This software was written by:
+   *Thor Stærk Stenvang <thor.stark.stenvang@gmail.com> 
+   *As long as you retain this notice you can do whatever you want with it
+
+   *DESCRIPTION: MATLAB class for handling communication with brookfield
+    CAP-2000+
+
+   *Created on: Dec 1, 2015
+%}
 classdef viscometerSerial
     properties(GetAccess=private)
         serial_obj     %Serial port object
@@ -34,7 +46,7 @@ classdef viscometerSerial
                 error('Wrong number of data');
             end 
         end
-        %Sends Data and gets repons
+        %Sends Data and get respons
         function rx_data = sendReceive(obj,tx_data,rx_size)
             fopen(obj.serial_obj);
             obj.sendCommand(tx_data);
@@ -51,14 +63,14 @@ classdef viscometerSerial
             Command = 86; %86 = V
             t =[Command floor(RPM/255) mod(RPM,255) 13];
             %Send data and receive respons
-            r = obj.sendReceive(t,3)
+            r = obj.sendReceive(t,3);
         end
         % Class function for setting Temperature of viscometer
         function setTemp(obj,temp)
             Command = 84; %86 = T
             t =[Command floor(temp/255) mod(temp,255) 13]; %13=CR
             %Send data and receive respons
-            r = obj.sendReceive(t,3)
+            r = obj.sendReceive(t,3);
         end
         
         %Read from viscometer
