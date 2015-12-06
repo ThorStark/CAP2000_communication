@@ -59,18 +59,22 @@ classdef viscometerSerial
             %TODO: Use information to something!
         end
         % Class function for setting speed of viscometer
-        function setSpeed(obj,RPM)
+        function setSpeed(obj,RPMd)
             Command = 86; %86 = V
-            t =[Command floor(RPM/255) mod(RPM,255) 13];
+            %Convert from decimal to a 3 digit hexidecimal string
+            speedX = dec2hex(RPMd,3);
+            t =[Command speedX 13];
             %Send data and receive respons
-            r = obj.sendReceive(t,3);
+            r = obj.sendReceive(t,4);
         end
         % Class function for setting Temperature of viscometer
-        function setTemp(obj,temp)
+        function setTemp(obj,tempd)
             Command = 84; %86 = T
-            t =[Command floor(temp/255) mod(temp,255) 13]; %13=CR
+            %Convert from decimal to a 3 digit hexidecimal string
+            tempx = dec2hex(tempd,3);
+            t =[Command tempx 13]; %13=CR
             %Send data and receive respons
-            r = obj.sendReceive(t,3);
+            r = obj.sendReceive(t,4);
         end
         
         %Read from viscometer
@@ -78,20 +82,17 @@ classdef viscometerSerial
             Command = 82; %82 = R
             tx =[Command 13];
             %Send data and receive respons
-            rx = obj.sendReceive(tx,14);
-            %r(1)       command id
-            %r(2:4)     viscosity
-            %r(5:6)     FSR
-            %r(7:9)     shear rate
-            %r(10:11)   temperatur
-            %r(12)      cone
-            %r(13)      status
-            %r(14)      CR
-            v = str2num(sprintf('%d%d%d',rx(2),rx(3),rx(4)));
-            f = str2num(sprintf('%d%d',rx(5),rx(6)));
-            r = str2num(sprintf('%d%d%d',rx(7),rx(8),rx(9)));
-            t = str2num(sprintf('%d%d',rx(10),rx(11)));
-            c = str2num(sprintf('%d',rx(12)));
+            rx = obj.sendReceive(tx,24);
+            %rx(1)       command id
+            %rx(2:7)     viscosity
+            %rx(8:11)    FSR
+            %rx(12:17)   shear rate
+            %rx(18:20)   temperatur
+            %rx(21:22)   cone
+            %rx(23:24)   status
+            %rx(25)      CR
+            %v = str2num(sprintf('%d%d%d',rx(2),rx(3),rx(4)));
+            v = rx
         end
         
         %Identify viscometer
